@@ -8,9 +8,9 @@ then extract into this project dir
 
 don't upload this sdk into repo
 
-```
+#+BEGIN_SRC shell
 unzip -O gb2312 CH583EVT.ZIP
-```
+#+END_SRC
 
 ** build
 
