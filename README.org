@@ -1,0 +1,41 @@
+* ch58x keyboard embedded controller firmware
+
+** ch58x sdk:
+
+download from: https://www.wch.cn/downloads/CH583EVT_ZIP.html
+
+then extract into this project dir
+
+don't upload this sdk into repo
+
+```
+unzip -O gb2312 CH583EVT.ZIP
+```
+
+** build
+
+#+BEGIN_SRC shell
+# you need add toolchain into your PATH
+make
+#+END_SRC
+
+** flash
+
+#+BEGIN_SRC shell
+# you need add wchisp into your PATH
+make flash
+#+END_SRC
+
+** todo
+
+- [x] usb boot keyboard
+- [x] usb boot mouse
+- [ ] usb hid keyboard
+- [ ] usb hid mouse
+- [ ] i2c keyboard
+- [ ] i2c mouse
+- [ ] spi keyboard
+- [ ] spi mouse
+- [ ] uart mouse
+- [ ] ps2 keyboard
+- [ ] ps2 mouse

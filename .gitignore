@@ -1,0 +1,9 @@
+*~
+EVT/*
+*.asm
+*.elf
+*.bin
+*.log
+.cache/*
+compile_commands.json
+core
