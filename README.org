@@ -28,14 +28,17 @@ make flash
 
 ** todo
 
-- [x] usb boot keyboard
-- [x] usb boot mouse
+- [x] usb hid boot keyboard
+- [x] usb hid boot mouse
 - [ ] usb hid keyboard
 - [ ] usb hid mouse
-- [ ] i2c keyboard
-- [ ] i2c mouse
-- [ ] spi keyboard
-- [ ] spi mouse
+- [ ] i2c hid keyboard
+- [ ] i2c hid mouse
+- [ ] spi hid keyboard
+- [ ] spi hid mouse
 - [ ] uart mouse
+- [ ] uart keyboard
+  uart tx: send data(ps2 protocol)
+  uart rx: recv data(ps2 protocol)
 - [ ] ps2 keyboard
 - [ ] ps2 mouse
