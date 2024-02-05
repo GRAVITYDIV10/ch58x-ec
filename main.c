@@ -11,6 +11,7 @@ int main(void) {
   PFIC_EnableIRQ(USB_IRQn);
 
   while (1) {
+    DelayMs(10);
     /* reference:
        https://wiki.osdev.org/USB_Human_Interface_Devices
        https://www.usb.org/sites/default/files/hid1_11.pdf
@@ -24,22 +25,27 @@ int main(void) {
     while(!usb_hid_boot_keyboard_tx_is_ready());
     usb_hid_boot_keyboard_tx(HID_KEY_B << 16);
     while(!usb_hid_boot_keyboard_tx_is_ready());
-    usb_hid_boot_keyboard_tx(0x0); // release
+    usb_hid_keyboard_tx(0x0); // release
     while(!usb_hid_boot_keyboard_tx_is_ready());
     usb_hid_boot_keyboard_tx(HID_KEY_A << 16);
     while(!usb_hid_boot_keyboard_tx_is_ready());
     usb_hid_boot_keyboard_tx(0x0);
     while(!usb_hid_boot_keyboard_tx_is_ready());
-    usb_hid_boot_keyboard_tx(HID_KEY_D << 16);
+    usb_hid_keyboard_tx(HID_KEY_D << 16);
     while(!usb_hid_boot_keyboard_tx_is_ready());
-    usb_hid_boot_keyboard_tx(0x0);
+    usb_hid_keyboard_tx(0x0);
 #endif
     // usb mouse demo
 #if 1
+    DelayMs(10);
     /*
       hid boot mouse format:
       [BTN 1B][XMOVE 1B][Y_MOVE 1B][RESV 1B]
      */
+    while(!usb_hid_boot_mouse_tx_is_ready());
+    usb_hid_mouse_tx(1 << 8);
+    while(!usb_hid_boot_mouse_tx_is_ready());
+    usb_hid_mouse_tx(0x0);
     while(!usb_hid_boot_mouse_tx_is_ready());
     usb_hid_boot_mouse_tx(HID_MOUSE_BTN_LEFT);
     while(!usb_hid_boot_mouse_tx_is_ready());
