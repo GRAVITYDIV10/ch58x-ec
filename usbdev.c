@@ -21,8 +21,8 @@ const unsigned char usbdev_desc[] = {
 };
 
 /*
-  HID KEYBOARD IF0 EP 0x81
-  HID MOUSE IF1 EP 0x82
+  HID BOOT KEYBOARD IF0 EP 0x81
+  HID BOOT MOUSE IF1 EP 0x82
  */
 
 const unsigned char usbdev_cfg[] = {
@@ -82,19 +82,19 @@ __attribute__((aligned(4))) uint8_t EP0_Databuf[64 + 64 + 64];
 __attribute__((aligned(4))) uint8_t EP1_Databuf[64 + 64];
 __attribute__((aligned(4))) uint8_t EP2_Databuf[64 + 64];
 
-int usb_keyboard_tx_is_ready(void) { return (EP1_GetINSta()); }
+int usb_hid_boot_keyboard_tx_is_ready(void) { return (EP1_GetINSta()); }
 
-void usb_keyboard_tx(uint64_t code) {
-  if (usb_keyboard_tx_is_ready()) {
+void usb_hid_boot_keyboard_tx(uint64_t code) {
+  if (usb_hid_boot_keyboard_tx_is_ready()) {
     memcpy(pEP1_IN_DataBuf, &code, 8);
     DevEP1_IN_Deal(8);
   }
 }
 
-int usb_mouse_tx_is_ready(void) { return (EP2_GetINSta()); }
+int usb_hid_boot_mouse_tx_is_ready(void) { return (EP2_GetINSta()); }
 
-void usb_mouse_tx(uint32_t code) {
-  if (usb_mouse_tx_is_ready()) {
+void usb_hid_boot_mouse_tx(uint32_t code) {
+  if (usb_hid_boot_mouse_tx_is_ready()) {
     memcpy(pEP2_IN_DataBuf, &code, 4);
     DevEP2_IN_Deal(4);
   }
