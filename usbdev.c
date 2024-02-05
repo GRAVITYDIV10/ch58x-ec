@@ -26,13 +26,14 @@ const unsigned char usbdev_desc[] = {
   HID BOOT MOUSE IF1 EP 0x82
   HID KEYBOARD IF2 EP 0x83
   HID MOUSE IF3 EP 0x84
+  HID TABLET IF4 EP 0x85
  */
 
 const unsigned char usbdev_cfg[] = {
     0x09,       // bLength
     0x02,       // bDescriptorType (Configuration)
-    0x6d, 0x00, // wTotalLength 109
-    0x04,       // bNumInterfaces 4
+    0x86, 0x00, // wTotalLength 134
+    0x05,       // bNumInterfaces 5
     0x01,       // bConfigurationValue
     0x00,       // iConfiguration (String Index)
     0xE0,       // bmAttributes Self Powered Remote Wakeup
@@ -167,6 +168,39 @@ const unsigned char usbdev_cfg[] = {
     0x01,       // bInterval 1 (unit depends on device speed)
 
     // 109 bytes
+
+    // HID tablet
+    0x09, // bLength
+    0x04, // bDescriptorType (Interface)
+    0x04, // bInterfaceNumber 4
+    0x00, // bAlternateSetting
+    0x01, // bNumEndpoints 1
+    0x03, // bInterfaceClass HID
+    0x00, // bInterfaceSubClass
+    0x00, // bInterfaceProtocol CUSTOM
+    0x00, // iInterface (String Index)
+
+    // 118 bytes
+
+    0x09,       // bLength
+    0x21,       // bDescriptorType (HID)
+    0x01, 0x00, // hid class
+    0x00,       // country code
+    0x01,       // num_descriptors
+    0x22,       // type: report
+    0x4a, 0x00, // length 74
+
+    // 127 bytes
+
+    0x07,       // bLength
+    0x05,       // bDescriptorType (Endpoint)
+    0x85,       // bEndpointAddress (IN/D2H)
+    0x03,       // bmAttributes (Interrupt)
+    0x06, 0x00, // wMaxPacketSize 6
+    0x01,       // bInterval 1 (unit depends on device speed)
+
+    // 134 bytes
+
 };
 
 const uint8_t hid_boot_keyboard_desc[] = {
@@ -235,6 +269,48 @@ const uint8_t hid_boot_mouse_desc[] = {
   // 52 bytes
 };
 
+const uint8_t hid_tablet_desc[] = {
+  // reference: qemu/hw/usb/dev-hid.c
+  0x05, 0x01,        // Usage Page (Generic Desktop Ctrls)
+  0x09, 0x02,        // Usage (Mouse)
+  0xA1, 0x01,        // Collection (Application)
+  0x09, 0x01,        //   Usage (Pointer)
+  0xA1, 0x00,        //   Collection (Physical)
+  0x05, 0x09,        //     Usage Page (Button)
+  0x19, 0x01,        //     Usage Minimum (0x01)
+  0x29, 0x03,        //     Usage Maximum (0x03)
+  0x15, 0x00,        //     Logical Minimum (0)
+  0x25, 0x01,        //     Logical Maximum (1)
+  0x95, 0x03,        //     Report Count (3)
+  0x75, 0x01,        //     Report Size (1)
+  0x81, 0x02,        //     Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+  0x95, 0x01,        //     Report Count (1)
+  0x75, 0x05,        //     Report Size (5)
+  0x81, 0x01,        //     Input (Const,Array,Abs,No Wrap,Linear,Preferred State,No Null Position)
+  0x05, 0x01,        //     Usage Page (Generic Desktop Ctrls)
+  0x09, 0x30,        //     Usage (X)
+  0x09, 0x31,        //     Usage (Y)
+  0x15, 0x00,        //     Logical Minimum (0)
+  0x26, 0xFF, 0x7F,  //     Logical Maximum (32767)
+  0x35, 0x00,        //     Physical Minimum (0)
+  0x46, 0xFF, 0x7F,  //     Physical Maximum (32767)
+  0x75, 0x10,        //     Report Size (16)
+  0x95, 0x02,        //     Report Count (2)
+  0x81, 0x02,        //     Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+  0x05, 0x01,        //     Usage Page (Generic Desktop Ctrls)
+  0x09, 0x38,        //     Usage (Wheel)
+  0x15, 0x81,        //     Logical Minimum (-127)
+  0x25, 0x7F,        //     Logical Maximum (127)
+  0x35, 0x00,        //     Physical Minimum (0)
+  0x45, 0x00,        //     Physical Maximum (0)
+  0x75, 0x08,        //     Report Size (8)
+  0x95, 0x01,        //     Report Count (1)
+  0x81, 0x06,        //     Input (Data,Var,Rel,No Wrap,Linear,Preferred State,No Null Position)
+  0xC0,              //   End Collection
+  0xC0,              // End Collection
+  // 74 bytes
+};
+
 
 #define DevEP0SIZE 0x40
 
@@ -244,6 +320,17 @@ __attribute__((aligned(4))) uint8_t EP0_Databuf[64 + 64 + 64];
 __attribute__((aligned(4))) uint8_t EP1_Databuf[64 + 64];
 __attribute__((aligned(4))) uint8_t EP2_Databuf[64 + 64];
 __attribute__((aligned(4))) uint8_t EP3_Databuf[64 + 64];
+__attribute__((aligned(4))) uint8_t EP5_Databuf[64 + 64];
+
+uint8_t *pEP5_RAM_Addr;
+#define pEP5_OUT_DataBuf      (pEP5_RAM_Addr)
+#define pEP5_IN_DataBuf       (pEP5_RAM_Addr + 64)
+void DevEP5_IN_Deal(uint8_t l)
+{
+  R8_UEP5_T_LEN = l;
+  R8_UEP5_CTRL = (R8_UEP5_CTRL & ~MASK_UEP_T_RES) | UEP_T_RES_ACK;
+}
+#define EP5_GetINSta()    (R8_UEP5_CTRL & UEP_T_RES_NAK)
 
 int usb_hid_boot_keyboard_tx_is_ready(void) { return (EP1_GetINSta()); }
 
@@ -281,6 +368,15 @@ void usb_hid_mouse_tx(uint32_t code) {
   }
 }
 
+int usb_hid_tablet_tx_is_ready(void) { return (EP5_GetINSta()); }
+
+void usb_hid_tablet_tx(uint64_t code) {
+  if (usb_hid_tablet_tx_is_ready()) {
+    memcpy(pEP5_IN_DataBuf, &code, 6);
+    DevEP5_IN_Deal(6);
+  }
+}
+
 #define DevEP0SIZE 0x40
 
 uint8_t DevConfig;
@@ -288,8 +384,8 @@ uint8_t SetupReqCode;
 uint16_t SetupReqLen;
 const uint8_t *pDescr;
 
-uint8_t usb_hiddev_idle_val[4];
-uint8_t usb_hiddev_protocol[4];
+uint8_t usb_hiddev_idle_val[8];
+uint8_t usb_hiddev_protocol[8];
 
 __HIGH_CODE
 void USB_DevTransProcess(void) {
@@ -372,6 +468,17 @@ void USB_DevTransProcess(void) {
         R8_UEP4_CTRL ^= RB_UEP_T_TOG;
         R8_UEP4_CTRL = (R8_UEP4_CTRL & ~MASK_UEP_T_RES) | UEP_T_RES_NAK;
         break;
+      case UIS_TOKEN_OUT | 5: {
+        if (R8_USB_INT_ST & RB_UIS_TOG_OK) { // 不同步的数据包将丢弃
+          R8_UEP5_CTRL ^= RB_UEP_R_TOG;
+          len = R8_USB_RX_LEN;
+          //DevEP5_OUT_Deal(len);
+        }
+      } break;
+      case UIS_TOKEN_IN | 5:
+        R8_UEP5_CTRL ^= RB_UEP_T_TOG;
+        R8_UEP5_CTRL = (R8_UEP5_CTRL & ~MASK_UEP_T_RES) | UEP_T_RES_NAK;
+        break;
       default:
         break;
       }
@@ -452,6 +559,10 @@ void USB_DevTransProcess(void) {
 	      pDescr = (uint8_t *)(&usbdev_cfg[93]);
 	      len = 9;
               break;
+	    case 4: // hid tablet
+	      pDescr = (uint8_t *)(&usbdev_cfg[118]);
+	      len = 9;
+              break;
             default:
 	      errflag = 0xff;
 	      break;
@@ -474,6 +585,10 @@ void USB_DevTransProcess(void) {
             case 3:
 	      pDescr = hid_boot_mouse_desc;
 	      len = sizeof(hid_boot_mouse_desc);
+              break;
+	    case 4:
+	      pDescr = hid_tablet_desc;
+	      len = sizeof(hid_tablet_desc);
 	      break;
             default:
 	      len = 0xff;
@@ -506,6 +621,14 @@ void USB_DevTransProcess(void) {
           if ((pSetupReqPak->bRequestType & USB_REQ_RECIP_MASK) ==
               USB_REQ_RECIP_ENDP) { // 端点
             switch ((pSetupReqPak->wIndex) & 0xff) {
+	    case 0x85:
+              R8_UEP5_CTRL = (R8_UEP5_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES)) |
+		UEP_T_RES_NAK;
+              break;
+            case 0x05:
+              R8_UEP5_CTRL = (R8_UEP5_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES)) |
+		UEP_R_RES_ACK;
+              break;
 	    case 0x84:
               R8_UEP4_CTRL = (R8_UEP4_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES)) |
 		UEP_T_RES_NAK;
@@ -588,6 +711,7 @@ void USB_DevTransProcess(void) {
     R8_UEP2_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
     R8_UEP3_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
     R8_UEP4_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
+    R8_UEP5_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
     R8_USB_INT_FG = RB_UIF_BUS_RST;
   } else if (intflag & RB_UIF_SUSPEND) {
     if (R8_USB_MIS_ST & RB_UMS_SUSPEND) {  // 挂起
@@ -605,22 +729,26 @@ void usbdev_init(void) {
   R8_USB_CTRL = 0x00;
   R8_UEP4_1_MOD = RB_UEP1_RX_EN | RB_UEP1_TX_EN | RB_UEP4_RX_EN | RB_UEP4_TX_EN;
   R8_UEP2_3_MOD = RB_UEP2_RX_EN | RB_UEP2_TX_EN | RB_UEP3_RX_EN | RB_UEP3_TX_EN;
+  R8_UEP567_MOD = RB_UEP5_RX_EN | RB_UEP5_TX_EN;
 
   pEP0_RAM_Addr = EP0_Databuf;
   pEP1_RAM_Addr = EP1_Databuf;
   pEP2_RAM_Addr = EP2_Databuf;
   pEP3_RAM_Addr = EP3_Databuf;
+  pEP5_RAM_Addr = EP5_Databuf;
 
   R16_UEP0_DMA = (uint16_t)(uint32_t)pEP0_RAM_Addr;
   R16_UEP1_DMA = (uint16_t)(uint32_t)pEP1_RAM_Addr;
   R16_UEP2_DMA = (uint16_t)(uint32_t)pEP2_RAM_Addr;
   R16_UEP3_DMA = (uint16_t)(uint32_t)pEP3_RAM_Addr;
+  R16_UEP5_DMA = (uint16_t)(uint32_t)pEP5_RAM_Addr;
 
   R8_UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
   R8_UEP1_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
   R8_UEP2_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
   R8_UEP3_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
   R8_UEP4_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
+  R8_UEP5_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
 
   R8_USB_DEV_AD = 0x00;
   R8_USB_CTRL = RB_UC_DEV_PU_EN | RB_UC_INT_BUSY | RB_UC_DMA_EN;

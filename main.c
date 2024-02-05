@@ -51,5 +51,18 @@ int main(void) {
     while(!usb_hid_boot_mouse_tx_is_ready());
     usb_hid_boot_mouse_tx(0x0); // release
 #endif
+#if 1
+    DelayMs(10);
+    /*
+      hid tablet format:
+      [BTN 1B][XPOS 2B][YPOS 2B][WHEEL 1B]
+     */
+    while(!usb_hid_tablet_tx_is_ready());
+    usb_hid_tablet_tx(((uint64_t)100 << 8) | ((uint64_t)200 << 24));
+    DelayMs(100);
+    while(!usb_hid_tablet_tx_is_ready());
+    usb_hid_tablet_tx(((uint64_t)300 << 8) | ((uint64_t)400 << 24));
+    DelayMs(100);
+#endif
   }
 }
