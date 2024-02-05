@@ -30,8 +30,8 @@ make flash
 
 - [x] usb hid boot keyboard
 - [x] usb hid boot mouse
-- [ ] usb hid keyboard
-- [ ] usb hid mouse
+- [x] usb hid keyboard
+- [x] usb hid mouse
 - [ ] i2c hid keyboard
 - [ ] i2c hid mouse
 - [ ] spi hid keyboard
