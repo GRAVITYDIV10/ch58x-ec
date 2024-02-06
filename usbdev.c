@@ -13,9 +13,9 @@ const unsigned char usbdev_desc[] = {
     0x23, 0x01, // idVendor  0x0123
     0x67, 0x45, // idProduct 0x4567
     0x00, 0x01, // bcdDevice 2.00
-    0x00,       // iManufacturer (String Index)
-    0x00,       // iProduct (String Index)
-    0x00,       // iSerialNumber (String Index)
+    0x01,       // iManufacturer (String Index)
+    0x02,       // iProduct (String Index)
+    0x03,       // iSerialNumber (String Index)
     0x01,       // bNumConfigurations 1
 
     // 18 bytes
@@ -50,7 +50,7 @@ const unsigned char usbdev_cfg[] = {
     0x03, // bInterfaceClass HID
     0x01, // bInterfaceSubClass BOOT
     0x01, // bInterfaceProtocol KEYBOARD
-    0x00, // iInterface (String Index)
+    0x04, // iInterface (String Index)
 
     // 18 bytes
 
@@ -69,7 +69,7 @@ const unsigned char usbdev_cfg[] = {
     0x81,       // bEndpointAddress (IN/D2H)
     0x03,       // bmAttributes (Interrupt)
     0x08, 0x00, // wMaxPacketSize 8
-    0x01,       // bInterval 1 (unit depends on device speed)
+    0x0a,       // bInterval 10 (unit depends on device speed)
 
     // 34 bytes
 
@@ -82,7 +82,7 @@ const unsigned char usbdev_cfg[] = {
     0x03, // bInterfaceClass HID
     0x01, // bInterfaceSubClass BOOT
     0x02, // bInterfaceProtocol MOUSE
-    0x00, // iInterface (String Index)
+    0x05, // iInterface (String Index)
 
     // 43 bytes
 
@@ -101,7 +101,7 @@ const unsigned char usbdev_cfg[] = {
     0x82,       // bEndpointAddress (IN/D2H)
     0x03,       // bmAttributes (Interrupt)
     0x04, 0x00, // wMaxPacketSize 4
-    0x01,       // bInterval 1 (unit depends on device speed)
+    0x0a,       // bInterval 10 (unit depends on device speed)
 
     // 59 bytes
 
@@ -114,7 +114,7 @@ const unsigned char usbdev_cfg[] = {
     0x03, // bInterfaceClass HID
     0x00, // bInterfaceSubClas
     0x01, // bInterfaceProtocol KEYBOARD
-    0x00, // iInterface (String Index)
+    0x06, // iInterface (String Index)
 
     // 68 bytes
 
@@ -133,7 +133,7 @@ const unsigned char usbdev_cfg[] = {
     0x83,       // bEndpointAddress (IN/D2H)
     0x03,       // bmAttributes (Interrupt)
     0x08, 0x00, // wMaxPacketSize 8
-    0x01,       // bInterval 1 (unit depends on device speed)
+    0x0a,       // bInterval 10 (unit depends on device speed)
 
     // 84 bytes
 
@@ -146,7 +146,7 @@ const unsigned char usbdev_cfg[] = {
     0x03, // bInterfaceClass HID
     0x00, // bInterfaceSubClass
     0x02, // bInterfaceProtocol MOUSE
-    0x00, // iInterface (String Index)
+    0x07, // iInterface (String Index)
 
     // 93 bytes
 
@@ -165,7 +165,7 @@ const unsigned char usbdev_cfg[] = {
     0x84,       // bEndpointAddress (IN/D2H)
     0x03,       // bmAttributes (Interrupt)
     0x04, 0x00, // wMaxPacketSize 4
-    0x01,       // bInterval 1 (unit depends on device speed)
+    0x0a,       // bInterval 10 (unit depends on device speed)
 
     // 109 bytes
 
@@ -178,7 +178,7 @@ const unsigned char usbdev_cfg[] = {
     0x03, // bInterfaceClass HID
     0x00, // bInterfaceSubClass
     0x00, // bInterfaceProtocol CUSTOM
-    0x00, // iInterface (String Index)
+    0x08, // iInterface (String Index)
 
     // 118 bytes
 
@@ -197,11 +197,40 @@ const unsigned char usbdev_cfg[] = {
     0x85,       // bEndpointAddress (IN/D2H)
     0x03,       // bmAttributes (Interrupt)
     0x06, 0x00, // wMaxPacketSize 6
-    0x01,       // bInterval 1 (unit depends on device speed)
+    0x0A,       // bInterval 10 (unit depends on device speed)
 
     // 134 bytes
 
 };
+
+const uint8_t usb_dev_lang_desc[] = { 0x04, 0x03, 0x09, 0x04 };
+const uint8_t usb_dev_str_manuinfo[] = { 0x08, 0x03, 'w', 0, 'c', 0, 'h', 0, };
+const uint8_t usb_dev_str_prodinfo[] = { 0x08, 0x03, '5', 0, '8', 0, 'x', 0, };
+const uint8_t usb_dev_str_serialnuminfo[] = { 0x10, 0x03, '0', 0, '1', 0, '2', 0, '3', 0, '4', 0, '5', 0, '6', 0, };
+const uint8_t usb_dev_str_hid_boot_keyboard[] = {
+    0x22, 0x03, 'h', 0, 'i', 0, 'd', 0, ' ', 0, 'b', 0, 'o', 0, 'o', 0, 't', 0,
+    'k',  0,    'e', 0, 'y', 0, 'b', 0, 'o', 0, 'a', 0, 'r', 0, 'd', 0,
+};
+
+const uint8_t usb_dev_str_hid_boot_mouse[] = {
+    0x1c, 0x03, 'h', 0, 'i', 0, 'd', 0, ' ', 0, 'b', 0, 'o', 0,
+    'o',  0,    't', 0, 'm', 0, 'o', 0, 'u', 0, 's', 0, 'e', 0,
+};
+
+const uint8_t usb_dev_str_hid_keyboard[] = {
+    0x1a, 0x03, 'h', 0, 'i', 0, 'd', 0, ' ', 0, 'k', 0, 'e', 0, 'y', 0, 'b', 0,
+    'o', 0, 'a', 0, 'r', 0, 'd', 0,
+};
+
+const uint8_t usb_dev_str_hid_mouse[] = {
+    0x14, 0x03, 'h', 0, 'i', 0, 'd', 0, ' ', 0,
+    'm',  0,    'o', 0, 'u', 0, 's', 0, 'e', 0,
+};
+
+const uint8_t usb_dev_str_hid_tablet[] = {
+  0x16, 0x03, 'h', 0, 'i', 0, 'd', 0,
+  ' ',  0,    't', 0, 'a', 0, 'b', 0,
+  'l',  0,    'e', 0, 't', 0};
 
 const uint8_t hid_boot_keyboard_desc[] = {
   0x05, 0x01,        // Usage Page (Generic Desktop Ctrls)
@@ -536,6 +565,42 @@ void USB_DevTransProcess(void) {
           } break;
           case USB_DESCR_TYP_STRING: {
             switch ((pSetupReqPak->wValue) & 0xff) {
+            case 0:
+              pDescr = usb_dev_lang_desc;
+              len = usb_dev_lang_desc[0];
+              break;
+	    case 1:
+              pDescr = usb_dev_str_manuinfo;
+              len = usb_dev_str_manuinfo[0];
+              break;
+	    case 2:
+              pDescr = usb_dev_str_prodinfo;
+              len = usb_dev_str_prodinfo[0];
+              break;
+	    case 3:
+              pDescr = usb_dev_str_serialnuminfo;
+              len = usb_dev_str_serialnuminfo[0];
+              break;
+	    case 4:
+              pDescr = usb_dev_str_hid_boot_keyboard;
+              len = usb_dev_str_hid_boot_keyboard[0];
+              break;
+	    case 5:
+              pDescr = usb_dev_str_hid_boot_mouse;
+              len = usb_dev_str_hid_boot_mouse[0];
+              break;
+	    case 6:
+              pDescr = usb_dev_str_hid_keyboard;
+              len = usb_dev_str_hid_keyboard[0];
+              break;
+	    case 7:
+              pDescr = usb_dev_str_hid_mouse;
+              len = usb_dev_str_hid_mouse[0];
+              break;
+	    case 8:
+              pDescr = usb_dev_str_hid_tablet;
+              len = usb_dev_str_hid_tablet[0];
+	      break;
             default:
               errflag = 0xFF; // 不支持的字符串描述符
               break;

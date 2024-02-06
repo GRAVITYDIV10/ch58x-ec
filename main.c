@@ -11,13 +11,13 @@ int main(void) {
   PFIC_EnableIRQ(USB_IRQn);
 
   while (1) {
-    DelayMs(10);
     /* reference:
        https://wiki.osdev.org/USB_Human_Interface_Devices
        https://www.usb.org/sites/default/files/hid1_11.pdf
     */
     // usb keyboard demo
 #if 1
+    DelayMs(10);
     /*
       hid boot keyboard format:
       [MOD 1B][RESV 1B][KEY1 1B][KEY2 1B]....[KEY6 1B]
@@ -62,7 +62,6 @@ int main(void) {
     DelayMs(100);
     while(!usb_hid_tablet_tx_is_ready());
     usb_hid_tablet_tx(((uint64_t)300 << 8) | ((uint64_t)400 << 24));
-    DelayMs(100);
 #endif
   }
 }
